@@ -87,14 +87,20 @@ class Game:
     def y_is_in_bounds(self, y):
         return 0 <= y < self._board_height
 
+def input_int(type): #type is simply to print to thr user to tell them what coordinate to enter
+    try:
+        return int(input("Enter {}".format(type)))
+    except ValueError:
+        print("Please enter an integer")
+        return input_int(type)
 
 if __name__ == '__main__':
     game = Game()
     display = TerminalDisplay()
     while True:
         display.display(game.get_board())
-        x = int(input("Enter x"))
-        y = int(input("Enter y"))
+        x = input_int("x")
+        y = input_int("y")
         exit_code = game.click_square(x, y)
         if exit_code == 1:
             print("GAME OVER")
