@@ -1,6 +1,7 @@
 import numpy as np
 
-from display import TerminalDisplay
+from board_displays import TerminalDisplay
+
 
 class Game:
     def __init__(self, board_width=10, board_height=5, bomb_density=0.1):
