@@ -1,7 +1,9 @@
 import colorama
 
+from displays.displaybase import DisplayBase
 
-class TerminalDisplay:
+
+class Display(DisplayBase):
     color_dict = {
         1: colorama.Fore.BLUE,
         2: colorama.Fore.GREEN,
