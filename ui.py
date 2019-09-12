@@ -23,7 +23,7 @@ def play_game():
 
     # setup display
     display_module = importlib.import_module("displays." + cfg["display"])
-    display = display_module.Display()
+    display = display_module.Display(game)
     while True:
         display.display(game.get_board())
         x = input_coord_int("x")
