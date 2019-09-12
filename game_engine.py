@@ -32,6 +32,9 @@ class Game:
             if self._board[y, x] < 100:
                 self._board[y, x] = self._count_bombs_around(x, y)
 
+        # Calculate once, as this does not change
+        self._bomb_position_mask = self._board == 100
+
     def _count_bombs_around(self, x, y):
         count = 0
         for _x, _y in self._get_squares_around(x, y):
@@ -79,13 +82,22 @@ class Game:
         # Return
         if self._game_over:
             return 1
+
+        if self.check_win_condition():
+            return 3
+
         return 0
+
+
 
     def x_is_in_bounds(self, x):
         return 0 <= x < self._board_width
 
     def y_is_in_bounds(self, y):
         return 0 <= y < self._board_height
+
+    def check_win_condition(self):
+        return np.all(np.bitwise_xor(self._bomb_position_mask, self._vision_mask))
 
 def input_int(type): #type is simply to print to thr user to tell them what coordinate to enter
     try:
@@ -95,7 +107,7 @@ def input_int(type): #type is simply to print to thr user to tell them what coor
         return input_int(type)
 
 if __name__ == '__main__':
-    game = Game()
+    game = Game(5,5)
     display = TerminalDisplay()
     while True:
         display.display(game.get_board())
@@ -104,3 +116,7 @@ if __name__ == '__main__':
         exit_code = game.click_square(x, y)
         if exit_code == 1:
             print("GAME OVER")
+            break
+        elif exit_code == 3:
+            print("Well done, you've won the game!")
+            break
