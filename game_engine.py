@@ -8,8 +8,8 @@ class Game:
         assert isinstance(bomb_density, float)
         assert 0 < bomb_density < 1
 
-        self._board_width = board_width
-        self._board_height = board_height
+        self.board_width = board_width
+        self.board_height = board_height
 
         self._build_board(bomb_density)
         self._vision_mask = np.zeros_like(self._board, dtype='bool')
@@ -17,8 +17,8 @@ class Game:
         self._game_over = False
 
     def _build_board(self, bomb_density):
-        self._board = np.zeros((self._board_height, self._board_width), dtype='int8')
-        xx, yy = np.meshgrid(np.arange(self._board_width), np.arange(self._board_height))
+        self._board = np.zeros((self.board_height, self.board_width), dtype='int8')
+        xx, yy = np.meshgrid(np.arange(self.board_width), np.arange(self.board_height))
 
         coords = list(zip(np.ravel(xx), np.ravel(yy)))
 
@@ -87,10 +87,10 @@ class Game:
         return 0
 
     def _x_is_in_bounds(self, x):
-        return 0 <= x < self._board_width
+        return 0 <= x < self.board_width
 
     def _y_is_in_bounds(self, y):
-        return 0 <= y < self._board_height
+        return 0 <= y < self.board_height
 
     def _check_win_condition(self):
         return np.all(np.bitwise_xor(self._bomb_position_mask, self._vision_mask))
