@@ -12,7 +12,7 @@ import numpy as np
 
 
 def random_click(game):
-    return game.click_square(np.random.randint(0, game.board_width +1), np.random.randint(0, game.board_height + 1))
+    return game.left_click_square(np.random.randint(0, game.board_width + 1), np.random.randint(0, game.board_height + 1))
 
 
 def autosolve():

@@ -1,6 +1,7 @@
 import numpy as np
 
 
+
 class Game:
     def __init__(self, board_width=10, board_height=5, bomb_density=0.1):
         assert isinstance(board_width, int)
@@ -13,6 +14,7 @@ class Game:
 
         self._build_board(bomb_density)
         self._vision_mask = np.zeros_like(self._board, dtype='bool')
+        self.flag_mask = np.zeros_like(self._board, dtype='bool')
 
         self._game_over = False
 
@@ -55,13 +57,17 @@ class Game:
         board = np.where(self._vision_mask, board, 101, )
         return board
 
-    def click_square(self, x, y):
+    def left_click_square(self, x, y):
         if not (self._x_is_in_bounds(x) and self._y_is_in_bounds(y)):
             # Selected square out of bounds
             return 2
+        elif self.flag_mask[y, x]:
+            # Selected square is a flag and cannot be clicked
+            return 4
 
         # Make square visible
         self._vision_mask[y, x] = True
+        self.flag_mask[y, x] = False
         value = self._board[y, x]
 
         if value == 0:
@@ -69,7 +75,7 @@ class Game:
             for _x, _y in self._get_squares_around(x, y):
                 if not self._vision_mask[_y, _x]:
                     game_over = self._game_over
-                    _ = self.click_square(_x, _y)
+                    _ = self.left_click_square(_x, _y)
                     # Check we have not failed the game
                     assert game_over == self._game_over
 
@@ -85,6 +91,18 @@ class Game:
             return 3
 
         return 0
+
+    def right_click_square(self, x, y):
+        if not (self._x_is_in_bounds(x) and self._y_is_in_bounds(y)):
+            # Selected square out of bounds
+            return 2
+
+        if self._vision_mask[y, x]:
+            print("Cannot place flag, square is visible")
+
+        self.flag_mask[y, x] = not self.flag_mask[y, x]
+
+
 
     def _x_is_in_bounds(self, x):
         return 0 <= x < self.board_width

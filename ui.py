@@ -28,7 +28,7 @@ def play_game():
         display.display(game.get_board())
         x = input_coord_int("x")
         y = input_coord_int("y")
-        exit_code = game.click_square(x, y)
+        exit_code = game.left_click_square(x, y)
         if exit_code == 1:
             print("GAME OVER")
             break
