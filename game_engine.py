@@ -1,7 +1,5 @@
 import numpy as np
 
-from board_displays import TerminalDisplay
-
 
 class Game:
     def __init__(self, board_width=10, board_height=5, bomb_density=0.1):
@@ -49,7 +47,7 @@ class Game:
                     continue
                 test_x = x + dx
                 test_y = y + dy
-                if self.x_is_in_bounds(test_x) and self.y_is_in_bounds(test_y):
+                if self._x_is_in_bounds(test_x) and self._y_is_in_bounds(test_y):
                     yield test_x, test_y
 
     def get_board(self):
@@ -58,7 +56,7 @@ class Game:
         return board
 
     def click_square(self, x, y):
-        if not (self.x_is_in_bounds(x) and self.y_is_in_bounds(y)):
+        if not (self._x_is_in_bounds(x) and self._y_is_in_bounds(y)):
             # Selected square out of bounds
             return 2
 
@@ -71,7 +69,7 @@ class Game:
             for _x, _y in self._get_squares_around(x, y):
                 if not self._vision_mask[_y, _x]:
                     game_over = self._game_over
-                    status_code = self.click_square(_x, _y)
+                    _ = self.click_square(_x, _y)
                     # Check we have not failed the game
                     assert game_over == self._game_over
 
@@ -83,40 +81,18 @@ class Game:
         if self._game_over:
             return 1
 
-        if self.check_win_condition():
+        if self._check_win_condition():
             return 3
 
         return 0
 
-
-
-    def x_is_in_bounds(self, x):
+    def _x_is_in_bounds(self, x):
         return 0 <= x < self._board_width
 
-    def y_is_in_bounds(self, y):
+    def _y_is_in_bounds(self, y):
         return 0 <= y < self._board_height
 
-    def check_win_condition(self):
+    def _check_win_condition(self):
         return np.all(np.bitwise_xor(self._bomb_position_mask, self._vision_mask))
 
-def input_int(type): #type is simply to print to thr user to tell them what coordinate to enter
-    try:
-        return int(input("Enter {}".format(type)))
-    except ValueError:
-        print("Please enter an integer")
-        return input_int(type)
 
-if __name__ == '__main__':
-    game = Game(5,5)
-    display = TerminalDisplay()
-    while True:
-        display.display(game.get_board())
-        x = input_int("x")
-        y = input_int("y")
-        exit_code = game.click_square(x, y)
-        if exit_code == 1:
-            print("GAME OVER")
-            break
-        elif exit_code == 3:
-            print("Well done, you've won the game!")
-            break
