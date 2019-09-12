@@ -1,6 +1,10 @@
+import importlib
+import json
+import os
+
 from game_engine import Game
 
-from board_displays import TerminalDisplay
+from displays.terminal_display import Display
 
 
 def input_int(variable_name):  # type is simply to print to thr user to tell them what coordinate to enter
@@ -11,9 +15,20 @@ def input_int(variable_name):  # type is simply to print to thr user to tell the
         return input_int(variable_name)
 
 
+def read_config():
+    with open(os.path.join(os.path.dirname(__file__), "config.json"), 'r') as f:
+        config = json.load(f)
+    return config
+
+
 if __name__ == '__main__':
+    cfg = read_config()
+
     game = Game(5, 5)
-    display = TerminalDisplay()
+
+    # setup display
+    display_module = importlib.import_module("displays." + cfg["display"])
+    display = display_module.Display()
     while True:
         display.display(game.get_board())
         x = input_int("x")
