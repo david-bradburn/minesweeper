@@ -1,3 +1,6 @@
 {
-    "display": "terminal_display"
+    "display": "terminal_display",
+    "board_width": 10,
+    "board_height": 5,
+    "bomb_density": 0.1
 }
