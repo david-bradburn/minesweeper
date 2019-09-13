@@ -16,6 +16,54 @@ class Game:
 
         self._game_over = False
 
+    def get_board(self):
+        """
+        Returns:
+            The game board as visible to the player
+        """
+        board = np.copy(self._board)
+        board = np.where(self._vision_mask, board, 101, )
+        return board
+
+    ################################################
+    # Actions
+    ################################################
+
+    def left_click_square(self, x, y):
+        if not (self._x_is_in_bounds(x) and self._y_is_in_bounds(y)):
+            # Selected square out of bounds
+            return 2
+
+        # Make square visible
+        self._vision_mask[y, x] = True
+        value = self._board[y, x]
+
+        if value == 0:
+            # If value is zero, clear tiles around this square (recursively)
+            for _x, _y in self._get_squares_around(x, y):
+                if not self._vision_mask[_y, _x]:
+                    game_over = self._game_over
+                    _ = self.left_click_square(_x, _y)
+                    # Check we have not failed the game
+                    assert game_over == self._game_over
+
+        if value == 100:
+            # If bomb set game over
+            self._game_over = True
+
+        # Return
+        if self._game_over:
+            return 1
+
+        if self._check_win_condition():
+            return 3
+
+        return 0
+
+    ################################################
+    # Private methods
+    ################################################
+
     def _build_board(self, bomb_density):
         self._board = np.zeros((self.board_height, self.board_width), dtype='int8')
         xx, yy = np.meshgrid(np.arange(self.board_width), np.arange(self.board_height))
@@ -49,42 +97,6 @@ class Game:
                 test_y = y + dy
                 if self._x_is_in_bounds(test_x) and self._y_is_in_bounds(test_y):
                     yield test_x, test_y
-
-    def get_board(self):
-        board = np.copy(self._board)
-        board = np.where(self._vision_mask, board, 101, )
-        return board
-
-    def click_square(self, x, y):
-        if not (self._x_is_in_bounds(x) and self._y_is_in_bounds(y)):
-            # Selected square out of bounds
-            return 2
-
-        # Make square visible
-        self._vision_mask[y, x] = True
-        value = self._board[y, x]
-
-        if value == 0:
-            # If value is zero, clear tiles around this square (recursively)
-            for _x, _y in self._get_squares_around(x, y):
-                if not self._vision_mask[_y, _x]:
-                    game_over = self._game_over
-                    _ = self.click_square(_x, _y)
-                    # Check we have not failed the game
-                    assert game_over == self._game_over
-
-        if value == 100:
-            # If bomb set game over
-            self._game_over = True
-
-        # Return
-        if self._game_over:
-            return 1
-
-        if self._check_win_condition():
-            return 3
-
-        return 0
 
     def _x_is_in_bounds(self, x):
         return 0 <= x < self.board_width
