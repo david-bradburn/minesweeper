@@ -12,6 +12,7 @@ class Game:
 
         self.board_width = board_width
         self.board_height = board_height
+        self.bomb_density = bomb_density
 
         self._build_board(bomb_density)
         self._vision_mask = np.zeros_like(self._board, dtype='bool')
@@ -60,6 +61,7 @@ class Game:
 
         # Return
         if self._game_over:
+            print("GAME_OVER")
             return GAME_OVER
 
         if self._check_win_condition():

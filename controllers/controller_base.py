@@ -5,6 +5,7 @@ class ControllerBase:
     def __init__(self, game):
         self.response = None
 
+    @abstractmethod
     def get_input(self, board):
         """
         Returns:
@@ -14,6 +15,7 @@ class ControllerBase:
         """
         self.response = None  # Clear the response o the previous action taken
 
+    @abstractmethod
     def set_response(self, response):
         """ Set the response given by the game engine to the previous action """
         self.response = response

@@ -10,10 +10,41 @@ from displays.terminal_display import Display
 
 import numpy as np
 
+from controllers.controller_base import ControllerBase
+from response_codes import  *
+
+
+class Controller(ControllerBase):
+    def __init__(self, game):
+        super().__init__(game)
+        self.baord_width = game.board_width
+        self.board_height = game.board_height
+        self.bomb_probs = np.ones_like(game.get_board()) * game.bomb_density
+
+    def get_input(self, board):
+        super().get_input(board)
+
+        index = np.argmin(self.bomb_probs)
+        y, x = np.unravel_index(index, self.bomb_probs.shape)
+
+        print(y, x)
+
+
+        return "left_click_square", x, y
+
+    def set_response(self, response):
+        self.response = response
+        if self.response == GAME_OVER:
+            exit()
+
+    def bomb_prob_update(self):
+        for 
+
+
 
 def random_click(game):
     return game.left_click_square(
-        np.random.randint(0, game.board_width + 1), np.random.randint(0, game.board_height + 1))
+        )
 
 
 def autosolve():
