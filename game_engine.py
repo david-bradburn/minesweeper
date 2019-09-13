@@ -2,6 +2,8 @@ import numpy as np
 
 from response_codes import *
 
+import board_codes
+
 
 class Game:
     def __init__(self, board_width=10, board_height=5, bomb_density=0.1):
@@ -26,7 +28,7 @@ class Game:
             The game board as visible to the player
         """
         board = np.copy(self._board)
-        board = np.where(self._vision_mask, board, 101, )
+        board = np.where(self._vision_mask, board, board_codes.HIDDEN, )
         return board
 
     ################################################
@@ -55,7 +57,7 @@ class Game:
                     # Check we have not failed the game
                     assert game_over == self._game_over
 
-        if value == 100:
+        if value == board_codes.BOMB:
             # If bomb set game over
             self._game_over = True
 
@@ -92,19 +94,19 @@ class Game:
 
         for x, y in coords:
             if np.random.random() < bomb_density:
-                self._board[y, x] = 100
+                self._board[y, x] = board_codes.BOMB
 
         for x, y in coords:
-            if self._board[y, x] < 100:
+            if self._board[y, x] < board_codes.BOMB:
                 self._board[y, x] = self._count_bombs_around(x, y)
 
         # Calculate once, as this does not change
-        self._bomb_position_mask = self._board == 100
+        self._bomb_position_mask = self._board == board_codes.BOMB
 
     def _count_bombs_around(self, x, y):
         count = 0
         for _x, _y in self._get_squares_around(x, y):
-            if self._board[_y, _x] == 100:
+            if self._board[_y, _x] == board_codes.BOMB:
                 count += 1
         return count
 
