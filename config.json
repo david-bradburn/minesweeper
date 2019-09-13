@@ -1,6 +1,7 @@
 {
     "board_width": 10,
     "board_height": 5,
+    "bomb_density": 0.1,
     "display": "terminal_display",
     "controller": "terminal_controller"
 }

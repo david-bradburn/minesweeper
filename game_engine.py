@@ -13,6 +13,7 @@ class Game:
 
         self._build_board(bomb_density)
         self._vision_mask = np.zeros_like(self._board, dtype='bool')
+        self.flag_mask = np.zeros_like(self._board, dtype='bool')
 
         self._game_over = False
 
@@ -33,9 +34,13 @@ class Game:
         if not (self._x_is_in_bounds(x) and self._y_is_in_bounds(y)):
             # Selected square out of bounds
             return 2
+        elif self.flag_mask[y, x]:
+            # Selected square is a flag and cannot be clicked
+            return 4
 
         # Make square visible
         self._vision_mask[y, x] = True
+        self.flag_mask[y, x] = False
         value = self._board[y, x]
 
         if value == 0:
@@ -59,6 +64,16 @@ class Game:
             return 3
 
         return 0
+
+    def right_click_square(self, x, y):
+        if not (self._x_is_in_bounds(x) and self._y_is_in_bounds(y)):
+            # Selected square out of bounds
+            return 2
+
+        if self._vision_mask[y, x]:
+            print("Cannot place flag, square is visible")
+
+        self.flag_mask[y, x] = not self.flag_mask[y, x]
 
     ################################################
     # Private methods
