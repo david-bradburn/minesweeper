@@ -12,7 +12,8 @@ import numpy as np
 
 
 def random_click(game):
-    return game.left_click_square(np.random.randint(0, game.board_width + 1), np.random.randint(0, game.board_height + 1))
+    return game.left_click_square(
+        np.random.randint(0, game.board_width + 1), np.random.randint(0, game.board_height + 1))
 
 
 def autosolve():
@@ -36,8 +37,6 @@ def autosolve():
             else:
                 exit_code = random_click(game)
         number_of_clicks += 1
-
-
 
         print("No. of clicks {}".format(number_of_clicks))
         display.display(game.get_board())

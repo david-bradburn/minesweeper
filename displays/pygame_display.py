@@ -89,10 +89,6 @@ class Display(DisplayBase):
         if text:
             self.screen.blit(text, (x, y))
 
-
-
-
-
     def draw_gridlines(self):
         for i in range(self.board_width - 1):
             x = self.pixels_per_square + i * (self.pixels_per_square + self.gridline_width)

@@ -15,6 +15,9 @@ class Display(DisplayBase):
         8: colorama.Fore.LIGHTYELLOW_EX,
     }
 
+    def __init__(self, board):
+        super().__init__(board)
+
     def display(self, board):
         print("  " + "".join(["{:3}".format(i) for i in range(len(board[0, :]))]))
         for r, row in enumerate(board):

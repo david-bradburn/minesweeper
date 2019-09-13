@@ -4,11 +4,7 @@ from game_engine import Game
 from utils import read_config
 
 # initialise a game
-
-
-
 cfg = read_config()
-
 game = Game(cfg["board_width"], cfg["board_height"])
 
 # setup display

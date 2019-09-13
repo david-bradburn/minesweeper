@@ -1,5 +1,7 @@
 import numpy as np
 
+from response_codes import *
+
 
 class Game:
     def __init__(self, board_width=10, board_height=5, bomb_density=0.1):
@@ -33,10 +35,10 @@ class Game:
     def left_click_square(self, x, y):
         if not (self._x_is_in_bounds(x) and self._y_is_in_bounds(y)):
             # Selected square out of bounds
-            return 2
+            return INVALID_ARGS
         elif self.flag_mask[y, x]:
             # Selected square is a flag and cannot be clicked
-            return 4
+            return INVALID_ARGS
 
         # Make square visible
         self._vision_mask[y, x] = True
@@ -58,22 +60,23 @@ class Game:
 
         # Return
         if self._game_over:
-            return 1
+            return GAME_OVER
 
         if self._check_win_condition():
-            return 3
+            return VICTORY
 
-        return 0
+        return SUCCESS
 
     def right_click_square(self, x, y):
         if not (self._x_is_in_bounds(x) and self._y_is_in_bounds(y)):
             # Selected square out of bounds
-            return 2
+            return INVALID_ARGS
 
         if self._vision_mask[y, x]:
-            print("Cannot place flag, square is visible")
+            return INVALID_ARGS
 
         self.flag_mask[y, x] = not self.flag_mask[y, x]
+        return SUCCESS
 
     ################################################
     # Private methods
