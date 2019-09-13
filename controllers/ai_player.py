@@ -53,10 +53,10 @@ class Controller(ControllerBase):
                 else:
                     self.bomb_probs_spliced[dy + 2, dx + 2] = board_codes.OUT_OF_BOUNDS
 
-    def bomb_prob_update(self, board, x, y):
+    def bomb_prob_update(selfb, board, x, y):
 
         self.bomb_probs_array_splicer(board, x, y)
-        
+
 
 
     def _x_is_in_bounds(self, x):
