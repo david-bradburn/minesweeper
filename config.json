@@ -3,5 +3,5 @@
     "board_height": 5,
     "bomb_density": 0.1,
     "display": "terminal_display",
-    "controller": "ai_player"
+    "controller": "terminal_controller"
 }

@@ -2,6 +2,8 @@ import colorama
 
 from displays.displaybase import DisplayBase
 
+from board_codes import *
+
 
 class Display(DisplayBase):
     color_dict = {
@@ -27,15 +29,18 @@ class Display(DisplayBase):
                 if val == 0:
                     colors += colorama.Back.WHITE
                     val = "///"
-                elif val == 101:
+                elif val == HIDDEN:
                     colors += colorama.Back.LIGHTWHITE_EX + colorama.Fore.BLACK
                     val = " X "
-                elif val == 100:
+                elif val == BOMB:
                     colors += colorama.Back.RED + colorama.Fore.BLACK
                     val = " X "
                 elif 1 <= val <= 8:
                     colors += colorama.Back.LIGHTWHITE_EX + self.color_dict[val]
                     val = f" {val} "
+                elif val == FLAG:
+                    colors += colorama.Back.LIGHTWHITE_EX + colorama.Fore.RED
+                    val = " F "
 
                 val = str(val)
 

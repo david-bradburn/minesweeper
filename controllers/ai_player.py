@@ -21,7 +21,7 @@ class Controller(ControllerBase):
         self.board_width = game.board_width
         self.board_height = game.board_height
         self.bomb_probs = np.ones_like(game.get_board()) * game.bomb_density
-        self.bomb_probs_spliced = np.zeros((5,5))
+        self.board_sliced = np.zeros((5, 5))
 
     def get_input(self, board):
         super().get_input(board)
@@ -31,7 +31,7 @@ class Controller(ControllerBase):
         #
         # print(y, x)
 
-        print(self.bomb_probs_spliced)
+        print(self.board_sliced)
         for row in range(self.board_height):
             for col in range(self.board_width):
 
@@ -49,13 +49,34 @@ class Controller(ControllerBase):
         for dx in range(-2, 3):
             for dy in range(-2, 3):
                 if self._x_is_in_bounds(x + dx) and self._y_is_in_bounds(y + dy):
-                    self.bomb_probs_spliced[dy + 2, dx + 2] = board[y + dy, x + dx]
+                    self.board_sliced[dy + 2, dx + 2] = board[y + dy, x + dx]
                 else:
-                    self.bomb_probs_spliced[dy + 2, dx + 2] = board_codes.OUT_OF_BOUNDS
+                    self.board_sliced[dy + 2, dx + 2] = board_codes.OUT_OF_BOUNDS
 
-    def bomb_prob_update(selfb, board, x, y):
+    def bomb_prob_update(self, board, x, y):
+
+        if board[y, x] != board_codes.HIDDEN:
+            self.bomb_probs[y, x] = np.nan
+            return
 
         self.bomb_probs_array_splicer(board, x, y)
+
+        #need to add bomb prob update logic here
+
+        for row in range(1, 4):
+            for col in range(1, 4):
+                assert board[y, x] == board_codes.HIDDEN
+                assert self.board_sliced[2, 2] == board_codes.HIDDEN
+
+                if (row, col) == (2,2):
+                    continue
+                elif self.board_sliced[row, col] == board_codes.HIDDEN or self.board_sliced[row, col] == board_codes.OUT_OF_BOUNDS:
+                    continue
+
+
+
+
+
 
 
 

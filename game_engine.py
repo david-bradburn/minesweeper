@@ -29,6 +29,7 @@ class Game:
         """
         board = np.copy(self._board)
         board = np.where(self._vision_mask, board, board_codes.HIDDEN, )
+        board = np.where(self.flag_mask, board_codes.FLAG, board, )
         return board
 
     ################################################
