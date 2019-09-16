@@ -4,14 +4,19 @@ import threading
 from displays.displaybase import DisplayBase
 
 
+pygame.font.init()
+
+
 class Display(DisplayBase):
-    pixels_per_square = 100
-    gridline_width = 20
+    screen_width = 1920
+    screen_height = 1080
+
     gridline_color = (50, 50, 50)
     square_hidden_color = (70, 70, 70)
     square_revealed_color = (150, 150, 150)
 
     text_color = (255, 0, 0)
+    flag_color = (255, 0, 0)
 
     colors_dict = {
         1: (0, 0, 255),
@@ -27,16 +32,16 @@ class Display(DisplayBase):
     def __init__(self, game):
         super().__init__(game)
 
-        pygame.font.init()
-        self.font = pygame.font.SysFont('Verdana Bold', int(self.pixels_per_square * 0.8))
-
-        self.screen_width = game.board_width * self.pixels_per_square + (game.board_width - 1) * self.gridline_width
-        self.screen_height = game.board_height * self.pixels_per_square + (game.board_height - 1) * self.gridline_width
-
         self.board_height = game.board_height
         self.board_width = game.board_width
 
-        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+        pixels_per_square_upper = min(self.screen_width//self.board_width, self.screen_height//self.board_height)
+        self.pixels_per_square = pixels_per_square_upper * 4 // 5
+        self.gridline_width = pixels_per_square_upper // 5
+
+        self.font = pygame.font.SysFont('Verdana Bold', int(self.pixels_per_square * 1.2))
+
+        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height),pygame.FULLSCREEN)
         self.board = None
 
         self.display_thread = threading.Thread(target=self._display_thread)
@@ -63,7 +68,7 @@ class Display(DisplayBase):
         pygame.display.update()
 
     def draw_square(self, x, y, square_value):
-        # Draw background
+        # Draw backgroundcm
         x = x * (self.pixels_per_square + self.gridline_width)
         y = y * (self.pixels_per_square + self.gridline_width)
         w = self.pixels_per_square
@@ -82,9 +87,10 @@ class Display(DisplayBase):
         elif 0 < square_value <= 8:
             color = self.colors_dict[square_value]
             text = self.font.render(str(square_value), True, color)
+        elif square_value == 103:
+            text = self.font.render("F", True, self.flag_color)
         else:
-            color = self.text_color
-            text = self.font.render(str(square_value), True, color)
+            text = self.font.render(str(square_value), True, self.text_color)
 
         if text:
             self.screen.blit(text, (x, y))

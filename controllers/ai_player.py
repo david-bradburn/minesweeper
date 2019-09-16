@@ -24,8 +24,6 @@ class Controller(ControllerBase):
         self.board_sliced = np.zeros((5, 5))
 
     def get_input(self, board):
-        super().get_input(board)
-        print(self.response)
 
         if self.response == VICTORY:
             print('You win!')
@@ -34,11 +32,21 @@ class Controller(ControllerBase):
             print('You clicked a bomb, you lose')
             exit()
 
+        super().get_input(board)
 
         # index_min = np.argmin(self.bomb_probs)
         # y, x = np.unravel_index(index_min, self.bomb_probs.shape)
         #
         # print(y, x)
+
+        y_max, x_max = self._get_probs_argmax()
+
+        if self.bomb_probs[y_max, x_max] == 1:
+            func = 'right_click_square'
+            x = x_max
+            y = y_max
+            self.bomb_probs[y, x] = np.nan
+            return func, x, y
 
         #print(self.board_sliced)
         for row in range(self.board_height):
@@ -48,10 +56,9 @@ class Controller(ControllerBase):
                 self.bomb_prob_update(board, col, row)
 
 
-        index_min = np.nanargmin(self.bomb_probs)
-        index_max = np.nanargmax(self.bomb_probs)
 
-        y_max, x_max = np.unravel_index(index_max, self.bomb_probs.shape)
+
+        index_min = np.nanargmin(self.bomb_probs)
 
         if self.bomb_probs[y_max, x_max] == 1:
             func = 'right_click_square'
@@ -61,11 +68,12 @@ class Controller(ControllerBase):
             func = 'left_click_square'
             y, x = np.unravel_index(index_min, self.bomb_probs.shape)
 
-        print(self.bomb_probs)
-        print(func, x, y)
+        #print(self.bomb_probs)
+        #print(func, x, y)
         return func, x, y
 
     def set_response(self, response):
+        #print(self.response)
         self.response = response
         if self.response == GAME_OVER:
             exit()
@@ -129,49 +137,18 @@ class Controller(ControllerBase):
 
         return
 
+    def _get_probs_argmax(self):
+        index_max = np.nanargmax(self.bomb_probs)
+        y_max, x_max = np.unravel_index(index_max, self.bomb_probs.shape)
+
+        return y_max, x_max
+
     def _x_is_in_bounds(self, x):
         return 0 <= x < self.board_width
 
     def _y_is_in_bounds(self, y):
         return 0 <= y < self.board_height
 
-
-
-def random_click(game):
-    return game.left_click_square()
-
-
-def autosolve():
-    game = Game(10, 10)
-    display = Display(game)
-
-    display.display(game.get_board())
-
-    number_of_clicks = 0
-
-    while True:
-        assert number_of_clicks < (game.board_height + 1) * (game.board_width + 1) + 1
-
-        print(game.get_board())
-        if number_of_clicks == 0:
-            exit_code = random_click(game)
-        else:
-            if np.any(game.get_board() == 0):
-                print("Open patch found")
-                break
-            else:
-                exit_code = random_click(game)
-        number_of_clicks += 1
-
-        print("No. of clicks {}".format(number_of_clicks))
-        display.display(game.get_board())
-
-        if exit_code == 1:
-            print("GAME OVER")
-            break
-        elif exit_code == 3:
-            print("Well done, you've won the game!")
-            break
 
 
 if __name__ == '__main__':
