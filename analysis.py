@@ -7,8 +7,8 @@ from response_codes import *
 
 # initialise a game
 cfg = {
-    "board_width": 50,
-    "board_height": 50,
+    "board_width": 10,
+    "board_height": 10,
     "bomb_density": 0.1,
     "display": "pygame_display",
     "controller": "ai_player"
@@ -28,6 +28,7 @@ while True:
     action, *args = controller.get_input(game.get_board())
     response = getattr(game, action)(*args)
     controller.set_response(response)
+    display.set_response(response)
     display.display(game.get_board())
 
     if response in [VICTORY, GAME_OVER]:

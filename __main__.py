@@ -15,9 +15,13 @@ display = display_module.Display(game)
 controller_module = importlib.import_module("controllers." + cfg["controller"])
 controller = controller_module.Controller(game)
 
+display.display(game.get_board())
 
 while True:
-    display.display(game.get_board())
     action, *args = controller.get_input(game.get_board())
     response = getattr(game, action)(*args)
     controller.set_response(response)
+    display.set_response(response)
+
+    display.display(game.get_board())
+
