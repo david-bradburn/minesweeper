@@ -106,3 +106,6 @@ class Display(DisplayBase):
             y = self.pixels_per_square + i * (self.pixels_per_square + self.gridline_width)
             rect = pygame.Rect((0, y), (self.screen_width, self.gridline_width))
             pygame.draw.rect(self.screen, self.gridline_color, rect)
+
+    def reset(self):
+        pass
