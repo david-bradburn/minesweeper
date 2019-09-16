@@ -1,7 +1,7 @@
 {
     "board_width": 10,
-    "board_height": 5,
+    "board_height": 10,
     "bomb_density": 0.1,
     "display": "terminal_display",
-    "controller": "terminal_controller"
+    "controller": "ai_player"
 }

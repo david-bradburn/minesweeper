@@ -6,7 +6,7 @@ import board_codes
 
 
 class Game:
-    def __init__(self, board_width=10, board_height=5, bomb_density=0.1):
+    def __init__(self, board_width=10, board_height=10, bomb_density=0.1):
         assert isinstance(board_width, int)
         assert isinstance(board_height, int)
         assert isinstance(bomb_density, float)
@@ -129,5 +129,3 @@ class Game:
 
     def _check_win_condition(self):
         return np.all(np.bitwise_xor(self._bomb_position_mask, self._vision_mask))
-
-

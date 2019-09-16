@@ -25,20 +25,45 @@ class Controller(ControllerBase):
 
     def get_input(self, board):
         super().get_input(board)
+        print(self.response)
 
-        # index = np.argmin(self.bomb_probs)
-        # y, x = np.unravel_index(index, self.bomb_probs.shape)
+        if self.response == VICTORY:
+            print('You win!')
+            exit()
+        elif self.response == GAME_OVER:
+            print('You clicked a bomb, you lose')
+            exit()
+
+
+        # index_min = np.argmin(self.bomb_probs)
+        # y, x = np.unravel_index(index_min, self.bomb_probs.shape)
         #
         # print(y, x)
 
-        print(self.board_sliced)
+        #print(self.board_sliced)
         for row in range(self.board_height):
             for col in range(self.board_width):
+                #print(row, col)
 
                 self.bomb_prob_update(board, col, row)
 
 
-        return "left_click_square", x, y
+        index_min = np.nanargmin(self.bomb_probs)
+        index_max = np.nanargmax(self.bomb_probs)
+
+        y_max, x_max = np.unravel_index(index_max, self.bomb_probs.shape)
+
+        if self.bomb_probs[y_max, x_max] == 1:
+            func = 'right_click_square'
+            x = x_max
+            y = y_max
+        else:
+            func = 'left_click_square'
+            y, x = np.unravel_index(index_min, self.bomb_probs.shape)
+
+        print(self.bomb_probs)
+        print(func, x, y)
+        return func, x, y
 
     def set_response(self, response):
         self.response = response
@@ -60,25 +85,49 @@ class Controller(ControllerBase):
             return
 
         self.bomb_probs_array_splicer(board, x, y)
+        #print(self.board_sliced)
+
+        assert board[y, x] == board_codes.HIDDEN
+        assert self.board_sliced[2, 2] == board_codes.HIDDEN
 
         #need to add bomb prob update logic here
 
-        for row in range(1, 4):
-            for col in range(1, 4):
-                assert board[y, x] == board_codes.HIDDEN
-                assert self.board_sliced[2, 2] == board_codes.HIDDEN
+        #print(self.board_sliced)
+        for row_middle in range(1, 4):
+            for col_middle in range(1, 4):
 
-                if (row, col) == (2,2):
+                #print(self.board_sliced[row_middle, col_middle], row_middle, col_middle)
+
+                if (row_middle, col_middle) == (2,2):
                     continue
-                elif self.board_sliced[row, col] == board_codes.HIDDEN or self.board_sliced[row, col] == board_codes.OUT_OF_BOUNDS:
+                elif self.board_sliced[row_middle, col_middle] == board_codes.HIDDEN or self.board_sliced[row_middle, col_middle] == board_codes.OUT_OF_BOUNDS or self.board_sliced[row_middle, col_middle] == board_codes.FLAG:
+                    #print(self.board_sliced[row_middle, col_middle], row_middle, col_middle)
                     continue
 
+                hidden_square_count = 0
+                flag_count = 0
 
+                self.bomb_probs[y, x] = 0.1
 
+                for row_small in range(-1, 2):
+                    for coll_small in range(-1, 2):
+                        if self.board_sliced[row_middle + row_small, col_middle + coll_small] == board_codes.HIDDEN:
+                            hidden_square_count += 1
+                        if self.board_sliced[row_middle + row_small, col_middle + coll_small] == board_codes.FLAG:
+                            flag_count += 1
 
+                if hidden_square_count + flag_count == self.board_sliced[row_middle, col_middle]:
+                    self.bomb_probs[y, x] = 1
+                    return
+                elif flag_count == self.board_sliced[row_middle, col_middle]:
+                    self.bomb_probs[y, x] = 0
+                    return
+                else:
+                    #print(hidden_square_count/self.board_sliced[row_middle, col_middle])
+                    self.bomb_probs[y, x] = max(self.bomb_probs[y, x], (self.board_sliced[row_middle, col_middle] - flag_count)/hidden_square_count)
+                    assert self.bomb_probs[y, x] <= 1, (self.bomb_probs, self.bomb_probs[y, x], self.board_sliced[row_middle, col_middle],hidden_square_count, flag_count)
 
-
-
+        return
 
     def _x_is_in_bounds(self, x):
         return 0 <= x < self.board_width
@@ -126,6 +175,6 @@ def autosolve():
 
 
 if __name__ == '__main__':
-
-    autosolve()
+    pass
+    #autosolve()
 
