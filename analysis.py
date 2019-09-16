@@ -3,6 +3,8 @@ import importlib
 from game_engine import Game
 from utils import read_config
 
+from response_codes import *
+
 # initialise a game
 cfg = {
     "board_width": 50,
@@ -27,3 +29,6 @@ while True:
     response = getattr(game, action)(*args)
     controller.set_response(response)
     display.display(game.get_board())
+
+    if response in [VICTORY, GAME_OVER]:
+        break

@@ -27,10 +27,10 @@ class Controller(ControllerBase):
 
         if self.response == VICTORY:
             print('You win!')
-            exit()
+
         elif self.response == GAME_OVER:
             print('You clicked a bomb, you lose')
-            exit()
+
 
         super().get_input(board)
 
@@ -75,8 +75,7 @@ class Controller(ControllerBase):
     def set_response(self, response):
         #print(self.response)
         self.response = response
-        if self.response == GAME_OVER:
-            exit()
+
 
     def bomb_probs_array_splicer(self, board, x, y):
         for dx in range(-2, 3):

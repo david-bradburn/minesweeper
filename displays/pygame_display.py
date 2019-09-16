@@ -87,6 +87,8 @@ class Display(DisplayBase):
         elif 0 < square_value <= 8:
             color = self.colors_dict[square_value]
             text = self.font.render(str(square_value), True, color)
+        elif square_value == 100:
+            text = self.font.render("B", True, self.flag_color)
         elif square_value == 103:
             text = self.font.render("F", True, self.flag_color)
         else:
