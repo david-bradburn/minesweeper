@@ -49,24 +49,35 @@ class Controller(ControllerBase):
             return func, x, y
 
         #print(self.board_sliced)
+        break_loop = False
+
         for row in range(self.board_height):
             for col in range(self.board_width):
                 #print(row, col)
 
                 self.bomb_prob_update(board, col, row)
 
-
-
+                if self.bomb_probs[row, col] in [1, 0]:
+                    print(self.bomb_probs[row, col], row, col)
+                    break_loop = True
+                    break
+            if break_loop:
+                break
 
         index_min = np.nanargmin(self.bomb_probs)
+        y_max, x_max = self._get_probs_argmax()
 
         if self.bomb_probs[y_max, x_max] == 1:
             func = 'right_click_square'
             x = x_max
             y = y_max
+            print(func, x, y, self.bomb_probs[y, x])
+            self.bomb_probs[y, x] = np.nan
         else:
             func = 'left_click_square'
             y, x = np.unravel_index(index_min, self.bomb_probs.shape)
+            print(func, x, y, self.bomb_probs[y, x])
+            self.bomb_probs[y, x] = np.nan
 
         #print(self.bomb_probs)
         #print(func, x, y)
